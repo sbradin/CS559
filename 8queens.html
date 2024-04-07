@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>8 Queens Game</title>
+    <!--Crown icons created by Joalfa - Flaticon-->
+    <link rel="icon" type="image/png" href="data/queen.png">
+    
+    <style>
+        body{
+            display:flex;
+            justify-content:center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: rgb(79, 48, 31);
+            font-family: Arial, sans-serif;
+        }
+        canvas{
+            background-color: rgb(79, 48, 31);
+            border: 1px solid black;
+        }
+        #welcomeScreen{
+            text-align:center;
+            display:block;
+        }
+        #gameScreen{
+            text-align:center;
+            display:none;
+        }
+        #victoryScreen{
+            text-align:center;
+            display:none;
+        }
+        #lossScreen{
+            text-align:center;
+            display:none;
+        }
+
+        /*
+            Styles beyond this point were used from UIVerse.io to make a more appealing looking UI
+            for options and buttons
+        */
+
+        /*
+            Included license from mrhyddenn on UIVerse.io
+
+            https://uiverse.io/mrhyddenn/stale-cheetah-42 
+
+            MIT License
+
+            Copyright - 2024 mrhyddenn  
+
+            Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+            The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+            THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+         */
+
+        .button {
+        position: relative;
+        padding: 10px 20px;
+        margin-top: 20px;
+        border-radius: 7px;
+        border: 1px solid rgb(67, 152, 63);
+        font-size: 14px;
+        text-transform: uppercase;
+        font-weight: 600;
+        letter-spacing: 2px;
+        background: transparent;
+        color: #fff;
+        overflow: hidden;
+        box-shadow: 0 0 0 0 transparent;
+        -webkit-transition: all 0.2s ease-in;
+        -moz-transition: all 0.2s ease-in;
+        transition: all 0.2s ease-in;
+        }
+
+        .button:hover {
+        background: rgb(67, 152, 63);
+        box-shadow: 0 0 30px 5px rgba(22, 81, 9, 0.877);
+        -webkit-transition: all 0.2s ease-out;
+        -moz-transition: all 0.2s ease-out;
+        transition: all 0.2s ease-out;
+        }
+
+        .button:hover::before {
+        -webkit-animation: sh02 0.5s 0s linear;
+        -moz-animation: sh02 0.5s 0s linear;
+        animation: sh02 0.5s 0s linear;
+        }
+
+        .button::before {
+        content: '';
+        display: block;
+        width: 0px;
+        height: 86%;
+        position: absolute;
+        top: 7%;
+        left: 0%;
+        opacity: 0;
+        background: #fff;
+        box-shadow: 0 0 50px 30px #fff;
+        -webkit-transform: skewX(-20deg);
+        -moz-transform: skewX(-20deg);
+        -ms-transform: skewX(-20deg);
+        -o-transform: skewX(-20deg);
+        transform: skewX(-20deg);
+        }
+
+        @keyframes sh02 {
+            from {
+              opacity: 0;
+              left: 0%;
+            }
+    
+            50% {
+              opacity: 1;
+            }
+    
+            to {
+              opacity: 0;
+              left: 100%;
+            }
+        }
+
+        .button:active {
+        box-shadow: 0 0 0 0 transparent;
+        -webkit-transition: box-shadow 0.2s ease-in;
+        -moz-transition: box-shadow 0.2s ease-in;
+        transition: box-shadow 0.2s ease-in;
+        }
+
+
+        .checkbox-label {
+            font-size: 20px; 
+            text-align: center;
+            color: #eeeed2; 
+            margin-left: 25px;
+            margin-top : 15px;
+            vertical-align:middle; /* Align with the custom checkbox */
+        }
+
+
+        /*
+            Included license from bociKond on UIVerse.io
+
+            https://uiverse.io/bociKond/spotty-elephant-13
+
+            MIT License
+
+            Copyright - 2024 bociKond (Kaloyan Todorov) 
+
+            Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+            The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+            THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+         */
+        
+        /* Hide the default checkbox */
+        .container input {
+          position: absolute;
+          opacity: 0;
+          cursor: pointer;
+          height: 0;
+          width: 0;
+        }
+
+        .container {
+          display: flex;
+          position: relative;
+          cursor: pointer;
+          font-size: 1.5rem;
+          user-select: none;
+        }
+
+        /* Create a custom checkbox */
+        .checkmark {
+          --clr: rgb(67, 152, 63);
+          position: relative;
+          top: 0;
+          left: 0;
+          height: 1.3em;
+          width: 1.3em;
+          background-color: #ccc;
+          border-radius: 50%;
+          transition: 300ms;
+          margin-top: 10px;
+          margin-bottom: 10px;
+        }
+
+        /* When the checkbox is checked, add a blue background */
+        .container input:checked ~ .checkmark {
+          background-color: var(--clr);
+          border-radius: .5rem;
+          animation: pulse 500ms ease-in-out;
+        }
+
+        /* Create the checkmark/indicator (hidden when not checked) */
+        .checkmark:after {
+          content: "";
+          position: absolute;
+          display: none;
+        }
+
+        /* Show the checkmark when checked */
+        .container input:checked ~ .checkmark:after {
+          display: block;
+        }
+
+        /* Style the checkmark/indicator */
+        .container .checkmark:after {
+          left: 0.45em;
+          top: 0.25em;
+          width: 0.25em;
+          height: 0.5em;
+          border: solid #E0E0E2;
+          border-width: 0 0.15em 0.15em 0;
+          transform: rotate(45deg);
+        }
+
+        @keyframes pulse {
+          0% {
+            box-shadow: 0 0 0 #0B6E4F90;
+            rotate: 20deg;
+          }
+      
+          50% {
+            rotate: -20deg;
+          }
+      
+          75% {
+            box-shadow: 0 0 0 10px #0B6E4F60;
+          }
+      
+          100% {
+            box-shadow: 0 0 0 13px #0B6E4F30;
+            rotate: 0;
+          }
+        }
+
+        h2{
+            color : #eeeed2;
+        }
+    </style>
+</head>
+<body>
+    <div id="welcomeScreen" class="screen">
+        <h2>Welcome to 8 Queens Game</h2>
+
+        <label class="container">
+            <input checked="checked" id = "difficulty" type="checkbox">
+            <div class="checkmark"></div>
+            <span class="checkbox-label">Hard Mode</span>
+        </label>
+
+
+        <label class="container">
+            <input checked="checked" id = "potentialMoves" type="checkbox">
+            <div class="checkmark"></div>
+            <span class="checkbox-label">Show Potential Moves</span>
+        </label>
+
+        <button class="button" id="startButton" onclick="startGame()">Start Game</button>
+    </div>
+    <div id="gameScreen" class="screen">
+        <canvas id="gameCanvas" width="400" height="400"></canvas>
+        <p></p>
+        <button class="button" onclick="restartGame()">Back To Menu</button>
+    </div>
+
+    <div id="victoryScreen" class="screen">
+        <h2>Congratulations You Won!</h2>
+        <canvas id="victoryCanvas" width="400" height="400"></canvas>
+        <p></p>
+        <button class="button" onclick="restartGame()">Back To Menu</button>
+    </div>
+    <div id="lossScreen" class="screen">
+        <h2>Too Bad! You Lost!</h2>
+        <img src = "data/frown.png">
+        <p></p>
+        <button class="button" onclick="restartGame()">Back To Menu</button>
+    </div>
+
+    <audio id="move" src="data/move-self.mp3" preload="auto"></audio>
+    <audio id="loss" src="data/loss_sound.mp3" preload="auto"></audio>
+    <audio id="win" src="data/win_sound.mp3" preload="auto"></audio>
+    <audio id="checkSound" src="data/check-box.mp3" preload="auto"></audio>
+    <audio id="buttonSound" src="data/button.mp3" preload="auto"></audio>
+
+    
+
+    <script>
+        var canvas = document.getElementById("gameCanvas");
+        var ctx = canvas.getContext("2d");
+        var board = [];
+        var queen = new Image();
+        queen.src = "data/LightQueen.webp";
+        var rectSize = 50;
+        var queenPositions = [];
+        var gameScreen = document.getElementById("gameScreen");
+        var welcomeScreen = document.getElementById("welcomeScreen");
+        var startButton = document.getElementById("startButton");
+        var potentialMoves = document.getElementById("potentialMoves");
+        var toggle = document.getElementById("difficulty");
+        var moves = [];
+        var playersTurn = true;
+        var move = document.getElementById("move");
+        var loss = document.getElementById("loss");
+        var win = document.getElementById("win");
+        var checksound = document.getElementById("checkSound");
+        var buttonsound = document.getElementById("buttonSound");
+        welcomeScreen.style.display = "block";
+
+        function playCheckSound() {
+            checksound.currentTime = 0; 
+            checksound.play(); 
+        }
+
+        function playButtonSound() {
+            buttonsound.currentTime = 0;
+            buttonsound.play(); 
+        }
+
+        difficulty.addEventListener('change', playButtonSound);
+        potentialMoves.addEventListener('change', playButtonSound);
+
+        function startGame(){
+            welcomeScreen.style.display = "none";
+            lossScreen.style.display = "none";
+            victoryScreen.style.display = "none";
+            gameScreen.style.display = "block";
+            playCheckSound();
+            playersTurn = true;
+            moves = Array(8).fill([]).map(() => Array(8).fill("*"));
+            board = [];
+            initBoard();
+            drawBoard();
+            gameLoop();
+        }
+
+        function restartGame(){
+            gameScreen.style.display = "none";
+            lossScreen.style.display = "none";
+            victoryScreen.style.display = "none";
+            welcomeScreen.style.display = "block";
+            playCheckSound();
+            board = [];
+            queenPositions = [];
+            moves = [];
+            playersTurn = true;
+        }
+
+        function initBoard(){
+            board = [];
+            let firstMoveX = Math.floor(Math.random() * 8);
+            let firstMoveY = Math.floor(Math.random() * 8);
+            moves = Array(8).fill([]).map(() => Array(8).fill("*"));
+            queenPositions = [{x: firstMoveX, y: firstMoveY}];
+            for(var i=0; i<8; i++){
+                board[i] = [];
+                for(var j=0; j<8; j++){
+                    board[i][j] = 0;
+                    if(i == firstMoveX && j == firstMoveY){
+                        board[i][j] = 1;
+                    }
+                }
+            }
+        }
+
+        function drawBoard(){
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for(var i=0; i<8; i++){
+                for(var j=0; j<8; j++){
+                    if((i+j)%2 == 0){
+                        ctx.fillStyle = "#eeeed2";
+                    }else{
+                        ctx.fillStyle = "#769656";
+                    }
+                    ctx.fillRect(i*rectSize, j*rectSize, rectSize, rectSize);
+                }
+            }
+            for(var i=0; i<queenPositions.length; i++){
+                ctx.drawImage(queen, queenPositions[i].x*rectSize, queenPositions[i].y*rectSize, rectSize, rectSize);
+            }
+            if(potentialMoves.checked){
+                showPotentialMoves();
+            }
+        }
+
+        function showPotentialMoves(){
+            for(var i=0; i<8; i++){
+                if (typeof moves[i] === 'undefined') {
+                    moves[i] = [];
+                }
+                for(var j=0; j<8; j++){
+                    if(isSafe(i, j)){
+                        moves[i][j] = "X";
+                    }else{
+                        moves[i][j] = "*";
+                    }
+                }
+            }
+            //place a dot representing a valid square to move
+            for(var i=0; i<8; i++){
+                for(var j=0; j<8; j++){
+                    if(moves[i][j] == "X"){
+                        ctx.fillStyle = "rgba(128, 128, 128, 128)";
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.arc(i*rectSize+rectSize/2, j*rectSize+rectSize/2, 5, 0, 2 * Math.PI);
+
+                        ctx.fill();
+                        ctx.restore();
+                    }
+                }
+            }
+        }
+
+        //used for marking possible moves checking row and column and diagonals from the locations of the queens
+        function isSafe(row, col){
+            for(var i=0; i<queenPositions.length; i++){
+                if(queenPositions[i].x == row || queenPositions[i].y == col || Math.abs(queenPositions[i].x - row) == Math.abs(queenPositions[i].y - col)){
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        canvas.addEventListener('click', function(event) {
+            var rect = canvas.getBoundingClientRect();
+            var x = event.clientX - rect.left;
+            var y = event.clientY - rect.top;
+            var i = Math.floor(x / rectSize);
+            var j = Math.floor(y / rectSize);
+            
+            if (playersTurn) {
+                if (isSafe(i, j)) {
+                    queenPositions.push({x: i, y: j}); // add new queen to clicked square if its their turn and it is a valid space
+                    playersTurn = false;
+                    move.play();
+                    drawBoard();
+                }
+            }
+        });
+
+        function checkWin() {
+            if(welcomeScreen.style.display == "block"){
+                    return;
+            }
+            if (queenPositions.length === 8) {
+                gameScreen.style.display = "none";
+                victoryScreen.style.display = "block";
+                win.play();
+            }
+            else{
+                for(var i = 0; i<moves.length; i++){
+                    for(var j = 0; j<moves[i].length; j++){
+                        if(isSafe(i, j)){
+                            return;
+                        }
+                    }
+                }
+                if(playersTurn){
+                    gameScreen.style.display = "none";
+                    lossScreen.style.display = "block";
+                    loss.play();
+                }
+                else{
+                    gameScreen.style.display = "none";
+                    victoryScreen.style.display = "block";
+                    win.play();
+                }
+            }
+        }
+
+        function AIplay(){
+            var finali;
+            var finalj;
+            var potentialQueens = [];
+            var AI_moves = [];
+            for(var i=0; i<queenPositions.length; i++){
+                potentialQueens.push({x: queenPositions[i].x, y: queenPositions[i].y});
+            }
+            for(var i = 0; i < moves.length; i++){
+                for(var j = 0; j < moves[i].length; j++){
+                    if(isSafe(i, j)){
+                        potentialQueens.push({x: i, y: j});
+                        firstMoves = get_avail_moves(potentialQueens);
+                        for(var k = 0; k < firstMoves.length; k++){
+                            for(var l = 0; l < firstMoves[k].length; l++){
+                                if(firstMoves[k][l] == "*"){
+                                    potentialQueens.push({x: k, y: l});
+                                    if(get_avail_moves(potentialQueens).length > 0){
+                                        AI_moves.push({length:get_avail_moves(potentialQueens).length, x:i, y:j});
+                                    }
+                                    potentialQueens.pop();
+                                }
+                            }
+                        }
+                        if(AI_moves.length == 0){
+                            AI_moves.push({length:0, x:i, y:j});
+                        }
+                    }
+                }
+            }
+            if(AI_moves.length == 0){
+                gameScreen.style.display = "none";
+                victoryScreen.style.display = "block";
+                win.play();
+                return;
+            }
+            AI_moves.sort((a, b) => (a.length > b.length) ? 1 : -1);
+            if(!toggle.checked){
+                finali = AI_moves[0].x;
+                finalj = AI_moves[0].y;
+            }else{
+                finali = AI_moves[AI_moves.length-1].x;
+                finalj = AI_moves[AI_moves.length-1].y;
+            }
+            queenPositions.push({x: finali, y: finalj});
+            move.play();
+            playersTurn = true;
+        }
+
+        function get_avail_moves(potentialQueens){
+            var avail_moves = Array(8).fill([]).map(() => Array(8).fill("X"));
+            for(var i=0; i<8; i++){
+                for(var j=0; j<8; j++){
+                    if(MockIsSafe(potentialQueens,i, j)){
+                        avail_moves.push("*");
+                    }
+                }
+            }
+            return avail_moves;
+        }
+
+        function MockIsSafe(potentialQueens, row, col){
+            for(var i=0; i<potentialQueens.length; i++){
+                if(potentialQueens[i].x == row || potentialQueens[i].y == col || Math.abs(potentialQueens[i].x - row) == Math.abs(potentialQueens[i].y - col)){
+                    return false;
+                }
+            }
+            return true;
+        }
+        let lastTime = 0;
+
+        function gameLoop() {
+            checkWin();
+            if(!playersTurn){
+                AIplay();
+            }
+            drawBoard();
+            
+            if(victoryScreen.style.display == "block"){
+                lastTime = 0;
+                victoryLoop();
+                return;
+            }
+            if(lossScreen.style.display == "block"){
+                return;
+            }
+            requestAnimationFrame(gameLoop);
+        }
+
+        //Victory Screen Section, taken from WB02
+
+        var canvasf = document.getElementById("victoryCanvas");
+        var contextf = canvasf.getContext("2d");
+
+        const colors = [
+            '255, 0, 0',      // red
+            '0, 128, 0',      // green
+            '0, 0, 255',      // blue
+            '255, 255, 0',    // yellow
+            '255, 192, 203',  // pink
+            '0, 255, 255',    // cyan
+            '255, 0, 255'     // magenta
+        ];
+
+
+        let fireworks = [];
+        let explosions = [];
+
+        let mouseXf = -10;
+        let mouseYf = -10;
+
+        canvasf.onmousemove = function(event) {
+            mouseXf = event.clientX;
+            mouseYf = event.clientY;
+
+            let box = /** @type {HTMLCanvasElement} */ (event.target).getBoundingClientRect();
+            mouseXf -= box.left;
+            mouseYf -= box.top;
+        };
+
+        canvasf.onmouseleave = function() {
+            mouseXf = -10;
+            mouseYf = -10;
+        };
+
+        canvasf.onclick = function(event) {
+            let color = colors[Math.floor(Math.random() * colors.length)];
+            let gravity = 0.1;
+            let startX =  Math.random() * canvasf.width;
+            let startY = canvasf.height;
+            let distY = startY - mouseYf;
+            let timeToPeak = Math.sqrt(Math.abs(distY) / (0.5 * gravity));
+            let vx = (mouseXf - startX) / timeToPeak;
+            let vy = -gravity * timeToPeak;
+            fireworks.push({"x": startX, "y": startY, "endX":mouseXf,"endY":mouseYf, 
+            "r": 7,"color":color, "alpha": 1, "vx": vx, "vy": vy});
+        }
+
+        let stars = []
+
+        function drawNightSky() {
+            let gradient = contextf.createLinearGradient(0, 0, 0, canvasf.height);
+            gradient.addColorStop(0, '#001848'); // Dark blue at the top
+            gradient.addColorStop(1, '#000000'); // Black at the bottom
+        
+            contextf.fillStyle = gradient;
+            contextf.fillRect(0, 0, canvasf.width, canvasf.height);
+        }
+
+        for (let i = 0; i < 100; i++) {
+            let x = Math.random() * canvasf.width;
+            let y = Math.random() * canvasf.height;
+            let radius = Math.random() * 1.5;
+            let alpha = Math.random();
+            stars.push({"x":x, "y":y, "r": radius, "alpha": alpha, "color": '255, 255, 255',
+            "direction": Math.random() > 0.5 ? 1 : -1, "lastTwinkleTime": 0});
+        }
+
+        function victoryLoop(timestamp){
+            contextf.clearRect(0,0,canvasf.width,canvasf.height);
+            drawNightSky();
+
+            if(timestamp - lastTime > 1200){
+                let color = colors[Math.floor(Math.random() * colors.length)];
+                let gravity = 0.1;
+                let startX =  Math.random() * canvasf.width;
+                let startY = canvasf.height;
+                let endX =  Math.random() * canvasf.width;
+                let endY = Math.random() * canvasf.height;
+                let distY = startY - endY;
+                let timeToPeak = Math.sqrt(Math.abs(distY) / (0.5 * gravity));
+                let vx = (endX - startX) / timeToPeak;
+                let vy = -gravity * timeToPeak;
+                fireworks.push({"x": startX, "y": startY, "endX":endX,"endY":endY, 
+                "r": 7,"color":color, "alpha": 1, "vx": vx, "vy": vy});
+                lastTime = timestamp;
+            }
+        
+            fireworks.forEach(function(firework){
+                if(firework.alpha !== 0){
+                    firework.y += firework.vy;
+                    firework.x += firework.vx;
+                    firework.vy += 0.1;
+                    if(firework.y <= firework.endY){
+                        for(let i = 0; i < 150; i++){
+                            let vx = (Math.random()-0.5)*5;
+                            let vy = (Math.random()-0.5)*5;
+                        
+                            explosions.push({"x":firework.endX,"y":firework.endY,
+                                            "vx":vx, "vy":vy,
+                                            "color": firework.color, "alpha": Math.random()});
+                            firework.alpha = 0;
+                        }
+                    }
+                }
+            });
+        
+            explosions.forEach(function(explosion){
+                explosion.y -= explosion.vy;
+                explosion.x -= explosion.vx;
+                explosion.alpha -= 0.01;
+            });
+        
+            fireworks = fireworks.filter(
+                firework => ((firework.y>0)&&(firework.x>0)&&(firework.x<canvasf.width)&&(firework.y<canvasf.height))
+                );
+
+            explosions = explosions.filter(
+                dot => ((dot.y>0)&&(dot.x>0)&&(dot.x<canvasf.width)&&(dot.y<canvasf.height))
+                );
+
+            stars.forEach(function(star){
+                let elapsed = timestamp - star.lastTwinkleTime;
+                if (elapsed > 100) {
+                    let adjustment = 0.075 * star.direction;
+                    if(star.alpha > 0.9){
+                        star.direction = -1;
+                    }
+                    else if(star.alpha < 0.1){
+                        star.direction = 1;
+                    }
+                    star.alpha = Math.max(0, Math.min(1, star.alpha + adjustment));
+
+                    star.lastTwinkleTime = timestamp;
+                }
+            });
+        
+            stars.forEach(function(star){
+                contextf.beginPath();
+                contextf.arc(star.x, star.y, star.r, 0, 2 * Math.PI);
+                contextf.fillStyle = `rgba(${star.color}, ${star.alpha})`;
+                contextf.fill();
+            });
+        
+            fireworks.forEach(function(firework){
+                contextf.beginPath();
+                contextf.arc(firework.x, firework.y, firework.r, 0, 2 * Math.PI);
+                contextf.fillStyle = `rgba(${firework.color}, ${firework.alpha})`;
+                contextf.fill();
+            });
+
+            explosions.forEach(function(explosion){
+                contextf.fillStyle = `rgba(${explosion.color}, ${explosion.alpha})`;;
+                let w = 5;
+                contextf.fillRect(explosion.x-5,explosion.y-5,w,w);
+            });
+
+            if(victoryScreen.style.display == "none"){
+                return;
+            }
+
+            requestAnimationFrame(victoryLoop);
+        }
+
+    </script>
+</body>
+</html>
