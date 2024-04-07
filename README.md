@@ -3,7 +3,7 @@
 ### <b>How To Play:</b>
 Player and Computer take turns placing queens on a standard chess board.
 
-The goal of the game is to cut off as many possible moves for your opponent so they are left with more queens left to place when there are no remaining spaces to play. 
+The goal of the game is to cut off as many possible moves for your opponent. If there are no available tiles for the current player to place a queen, the player who placed the last queen wins.
 
 An acceptable location to place a queen is described by a tile that is not being attacked by your own nor your opponents placed queens. 
 
